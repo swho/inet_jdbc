@@ -1,4 +1,4 @@
-# swho Oracle JDBC Proxy Driver
+# An Oracle JDBC Proxy Driver for I-net clear Report Designer
 
 本專案是一個專為 **i-net report designer** 開發的 JDBC Proxy 驅動程式。
 
@@ -45,6 +45,8 @@
    - 在 URL 欄位輸入帶有前綴的位址：
      `jdbc:swhoproxy:oracle:thin:@<HOST_IP>:<PORT>/<SERVICE_NAME>`
    - 輸入您的資料庫 **Username** 與 **Password**。
+<img width="797" height="782" alt="image" src="https://github.com/user-attachments/assets/8b63b568-b840-4616-89a7-64b8615b0361" />
+
 
 ### 3. 驗證效能
 點擊 **Test Connection**。若設定正確，您會發現連線速度極快，因為 Proxy 已經自動將中繼資料查詢範圍限縮在您的登入 Schema 內。
