@@ -26,7 +26,7 @@ public class ConnectionProxyHandler implements InvocationHandler {
         String methodName = method.getName();
 
         if ("getMetaData".equals(methodName)) {
-            // 回傳經過代理包裝過的 DatabaseMetaData Proxy
+            // 回傳經過代理包裝過的 DatabaseMetaData Proxy (不進行快取)
             return DatabaseMetaDataProxyHandler.createProxy(realConnection.getMetaData());
         }
 
