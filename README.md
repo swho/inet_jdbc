@@ -22,14 +22,14 @@
 ```
 
 產生的成品會放在 `target/` 目錄中，檔名為：
-👉 `oracle-jdbc-proxy-1.0-SNAPSHOT-jar-with-dependencies.jar`
+👉 `oracle-jdbc-proxy-1.1.1-jar-with-dependencies.jar`
 
 ---
 
 ## i-net Designer 設定教學
 
 ### 1. 部署驅動程式 (Driver Deployment)
-將編譯好的 `oracle-jdbc-proxy-1.0-SNAPSHOT-jar-with-dependencies.jar` 複製到 i-net Designer 的驅動程式目錄中：
+將編譯好的 `oracle-jdbc-proxy-1.1.1-jar-with-dependencies.jar` 複製到 i-net Designer 的驅動程式目錄中：
 - 預設安裝路徑通常為：`C:\Program Files\i-net Clear Reports Designer\lib\driver\`
 - **重要提示**：請確保該目錄下也存在原生的 Oracle JDBC 驅動（例如 `ojdbc8.jar`）。
 
