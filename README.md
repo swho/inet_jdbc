@@ -13,7 +13,7 @@
 - 完全保留 `Connection.prepareStatement(sql)` 以及 `ResultSetMetaData` 的行為，即使過濾了全域表的擷取，**撰寫 SQL 進行欄位抓取與測試時依然保持 100% 正確**。
 
 ## 安裝與編譯
-這個專案依賴 Java 與 Maven，如果您的終端或者 IDE (例如 IntelliJ IDEA) 有安裝 Maven，請執行下面指令打出包含所有依賴的超級 Jar (Fat Jar)：
+這個專案依賴 Java 與 Maven，如果您的終端或者 IDE (例如 IntelliJ IDEA) 有安裝 Maven，請執行下面指令打出可部署的 Jar：
 
 ```bash
 .\mvnw.cmd clean package   # Windows
@@ -22,14 +22,14 @@
 ```
 
 產生的成品會放在 `target/` 目錄中，檔名為：
-👉 `oracle-jdbc-proxy-1.1.1-jar-with-dependencies.jar`
+👉 `oracle-jdbc-proxy-1.1.2.jar`
 
 ---
 
 ## i-net Designer 設定教學
 
 ### 1. 部署驅動程式 (Driver Deployment)
-將編譯好的 `oracle-jdbc-proxy-1.1.1-jar-with-dependencies.jar` 複製到 i-net Designer 的驅動程式目錄中：
+將編譯好的 `oracle-jdbc-proxy-1.1.2.jar` 複製到 i-net Designer 的驅動程式目錄中：
 - 預設安裝路徑通常為：`C:\Program Files\i-net Clear Reports Designer\lib\driver\`
 - **重要提示**：請確保該目錄下也存在原生的 Oracle JDBC 驅動（例如 `ojdbc8.jar`）。
 
