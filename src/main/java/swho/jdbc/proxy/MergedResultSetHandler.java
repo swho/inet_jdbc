@@ -53,6 +53,7 @@ public class MergedResultSetHandler implements InvocationHandler {
         }
 
         if ("getMetaData".equals(methodName)) {
+            // 優先回傳第一個有資料或預設第一個的 MetaData
             return resultSets.get(0).getMetaData();
         }
 
@@ -61,10 +62,12 @@ public class MergedResultSetHandler implements InvocationHandler {
             return method.invoke(resultSets.get(currentIndex), args);
         }
 
-        // 預設值回傳
+        // 預設值回傳處理
         Class<?> returnType = method.getReturnType();
         if (returnType == boolean.class) return false;
         if (returnType == int.class || returnType == long.class || returnType == short.class) return 0;
+        if (returnType == float.class) return 0.0f;
+        if (returnType == double.class) return 0.0d;
         return null;
     }
 }
