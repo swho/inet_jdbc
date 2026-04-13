@@ -6,6 +6,7 @@ import java.sql.DriverManager;
 import java.sql.DriverPropertyInfo;
 import java.sql.SQLException;
 import java.sql.SQLFeatureNotSupportedException;
+import java.util.Enumeration;
 import java.util.Properties;
 import java.util.logging.Logger;
 
@@ -14,7 +15,8 @@ import java.util.logging.Logger;
  */
 public class OracleProxyDriver implements Driver {
 
-    private static final String URL_PREFIX = "jdbc:swhoproxy:";
+    private static final String PROXY_URL_PREFIX = "jdbc:swhoproxy:";
+    private static final String ORACLE_URL_PREFIX = "jdbc:oracle:";
     private static final Logger LOGGER = Logger.getLogger(OracleProxyDriver.class.getName());
 
     static {
@@ -32,30 +34,30 @@ public class OracleProxyDriver implements Driver {
         if (!acceptsURL(url)) {
             return null;
         }
-        String realUrl = url.replaceFirst(URL_PREFIX, "jdbc:");
+        String realUrl = toRealUrl(url);
         LOGGER.info("OracleProxyDriver intercepting connection. Forwarding to: " + realUrl);
-        
-        // Get the real connection from the underlying driver (e.g. Oracle)
-        Connection realConnection = DriverManager.getConnection(realUrl, info);
-        
+
+        Driver delegateDriver = findDelegateDriver(realUrl);
+        Connection realConnection = delegateDriver.connect(realUrl, info);
+        if (realConnection == null) {
+            throw new SQLException("Underlying Oracle JDBC driver refused URL: " + realUrl);
+        }
+
         // Wrap the real connection with the proxy
         return ConnectionProxyHandler.createProxy(realConnection);
     }
 
     @Override
     public boolean acceptsURL(String url) throws SQLException {
-        return url != null && url.startsWith(URL_PREFIX);
+        return url != null
+                && (url.startsWith(PROXY_URL_PREFIX) || url.startsWith(ORACLE_URL_PREFIX));
     }
 
     @Override
     public DriverPropertyInfo[] getPropertyInfo(String url, Properties info) throws SQLException {
         if (!acceptsURL(url)) return new DriverPropertyInfo[0];
-        String realUrl = url.replaceFirst(URL_PREFIX, "jdbc:");
-        Driver driver = DriverManager.getDriver(realUrl);
-        if (driver != null) {
-            return driver.getPropertyInfo(realUrl, info);
-        }
-        return new DriverPropertyInfo[0];
+        String realUrl = toRealUrl(url);
+        return findDelegateDriver(realUrl).getPropertyInfo(realUrl, info);
     }
 
     @Override
@@ -65,7 +67,7 @@ public class OracleProxyDriver implements Driver {
 
     @Override
     public int getMinorVersion() {
-        return 2;
+        return 3;
     }
 
     @Override
@@ -76,5 +78,56 @@ public class OracleProxyDriver implements Driver {
     @Override
     public Logger getParentLogger() throws SQLFeatureNotSupportedException {
         return Logger.getLogger("swho.jdbc.proxy");
+    }
+
+    private String toRealUrl(String url) {
+        if (url.startsWith(PROXY_URL_PREFIX)) {
+            return url.replaceFirst(PROXY_URL_PREFIX, "jdbc:");
+        }
+        return url;
+    }
+
+    private Driver findDelegateDriver(String realUrl) throws SQLException {
+        Driver delegateDriver = findRegisteredDelegateDriver(realUrl);
+        if (delegateDriver != null) {
+            return delegateDriver;
+        }
+
+        loadOracleDriverClass("oracle.jdbc.OracleDriver");
+        delegateDriver = findRegisteredDelegateDriver(realUrl);
+        if (delegateDriver != null) {
+            return delegateDriver;
+        }
+
+        loadOracleDriverClass("oracle.jdbc.driver.OracleDriver");
+        delegateDriver = findRegisteredDelegateDriver(realUrl);
+        if (delegateDriver != null) {
+            return delegateDriver;
+        }
+
+        throw new SQLException("No underlying Oracle JDBC driver found for URL: " + realUrl);
+    }
+
+    private Driver findRegisteredDelegateDriver(String realUrl) throws SQLException {
+        Enumeration<Driver> drivers = DriverManager.getDrivers();
+        while (drivers.hasMoreElements()) {
+            Driver driver = drivers.nextElement();
+            if (driver instanceof OracleProxyDriver) {
+                continue;
+            }
+
+            if (driver.acceptsURL(realUrl)) {
+                return driver;
+            }
+        }
+        return null;
+    }
+
+    private void loadOracleDriverClass(String className) {
+        try {
+            Class.forName(className);
+        } catch (ClassNotFoundException ignored) {
+            // Ignore and keep looking for already-registered drivers.
+        }
     }
 }

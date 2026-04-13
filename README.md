@@ -22,14 +22,14 @@
 ```
 
 產生的成品會放在 `target/` 目錄中，檔名為：
-👉 `oracle-jdbc-proxy-1.1.2.jar`
+👉 `oracle-jdbc-proxy-1.1.3.jar`
 
 ---
 
 ## i-net Designer 設定教學
 
 ### 1. 部署驅動程式 (Driver Deployment)
-將編譯好的 `oracle-jdbc-proxy-1.1.2.jar` 複製到 i-net Designer 的驅動程式目錄中：
+將編譯好的 `oracle-jdbc-proxy-1.1.3.jar` 複製到 i-net Designer 的驅動程式目錄中：
 - 預設安裝路徑通常為：`C:\Program Files\i-net Clear Reports Designer\lib\driver\`
 - **重要提示**：請確保該目錄下也存在原生的 Oracle JDBC 驅動（例如 `ojdbc8.jar`）。
 
@@ -40,10 +40,10 @@
 4. **Driver 設定參數**：
    - **Driver Name**: `Oracle Proxy (swho)` (可自訂名稱)
    - **Driver Class**: `swho.jdbc.proxy.OracleProxyDriver`
-   - **URL Prefix**: `jdbc:swhoproxy:`
+   - **URL Prefix**: `jdbc:oracle:`
 5. **連線設定 (Connection Info)**：
-   - 在 URL 欄位輸入帶有前綴的位址：
-     `jdbc:swhoproxy:oracle:thin:@<HOST_IP>:<PORT>/<SERVICE_NAME>`
+   - 在 URL 欄位輸入標準 Oracle JDBC 位址：
+      `jdbc:oracle:thin:@<HOST_IP>:<PORT>/<SERVICE_NAME>`
    - 輸入您的資料庫 **Username** 與 **Password**。
 <img width="797" height="782" alt="image" src="https://github.com/user-attachments/assets/8b63b568-b840-4616-89a7-64b8615b0361" />
 
